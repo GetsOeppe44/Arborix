@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arborix - Nerve Grafts to Restore Sensation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F1F5F9;
+            overflow-x: hidden;
+        }
+        #nerveCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .content-layer {
+            position: relative;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 antialiased selection:bg-cyan-500 selection:text-white">
+
+    <!-- Interactive Nerve Fiber Canvas -->
+    <canvas id="nerveCanvas"></canvas>
+
+    <!-- Main Content Area -->
+    <main class="content-layer flex-grow flex flex-col items-center justify-center px-6 py-12 text-center max-w-5xl mx-auto">
+        
+        <!-- Logo Placeholder Section -->
+        <div class="mb-8 flex flex-col items-center">
+            <div class="px-6 py-4 flex items-center justify-center">
+                <img src="images/Arborix_Logo_white.png" alt="Arborix Logo" class="relative h-40 md:h-64 w-auto object-contain">
+            </div>
+        </div>
+
+        <!-- Tagline -->
+        <p class="text-xl md:text-2xl text-slate-600 font-medium max-w-2xl mb-10 leading-relaxed">
+            Nerve-grafts to restore sensation in breast cancer patients
+        </p>
+
+        <!-- Contact Button -->
+        <div class="mb-12">
+            <a href="mailto:info@arborix.bio" 
+               class="inline-flex items-center justify-center px-8 py-4 rounded-full bg-slate-900 text-white font-semibold text-lg shadow-lg hover:bg-cyan-600 transition-all duration-300 transform hover:-translate-y-0.5">
+                Contact Us
+            </a>
+        </div>
+
+        <!-- Coming Soon Text -->
+        <div>
+            <p class="text-sm font-semibold tracking-widest text-slate-400 uppercase">
+                more information coming soon...
+            </p>
+        </div>
+
+    </main>
+
+    <!-- Footer / Powered By Section -->
+    <footer class="content-layer w-full py-6 px-6 border-t border-slate-200/60 bg-white/50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto flex flex-col gap-3 text-sm text-slate-500 font-medium">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+                <!-- Powered By Label on Left -->
+                <span class="whitespace-nowrap font-semibold">Powered by:</span>
+                
+                <!-- Partner Logos (Original Sizes, Single Line on Desktop) -->
+                <div class="flex flex-wrap items-center justify-center md:justify-end gap-6 opacity-75">
+                    <img src="images/BOOST.png" alt="BOOST" class="h-8 md:h-10 w-auto object-contain">
+                    <img src="images/BRIDGE.png" alt="SNSF BRIDGE" class="h-5 md:h-6 w-auto object-contain">
+                    <img src="images/ETH_Zurich.svg" alt="ETH Zurich" class="h-5 md:h-6 w-auto object-contain">
+                    <img src="images/Pioneer fellowship.png" alt="ETH Pioneer fellowship" class="h-10 md:h-14 w-auto object-contain">
+                    <img src="images/Innosuisse.png" alt="Innosuisse" class="h-12 md:h-20 w-auto object-contain">
+                    <img src="images/MassChallenge.png" alt="MassChallenge Switzerland" class="h-12 md:h-14 w-auto object-contain">
+                    <img src="images/TEB.png" alt="Tissue Engineering & Biofabrication" class="h-8 md:h-10 w-auto object-contain">
+                    <img src="images/UniGE.svg" alt="University of Geneva" class="h-6 md:h-8 w-auto object-contain">
+                </div>
+            </div>
+
+            <!-- Copyright Notice -->
+            <div class="text-xs text-slate-400 font-normal pt-2 border-t border-slate-200/40 w-full text-center">
+                Copyright &copy; 2026 ETH Zurich
+            </div>
+        </div>
+    </footer>
+
+    <!-- Optimized Nerve Fiber Script -->
+    <script>
+        const canvas = document.getElementById('nerveCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let fibers = [];
+        let lastX = null;
+        let lastY = null;
+        let lastTime = Date.now();
+
+        const nerveColors = ['#F10CE8', '#A947EF', '#756EF1', '#39AEF3', '#0CDEF1'];
+
+        window.addEventListener('mousemove', (e) => {
+            const currentX = e.clientX;
+            const currentY = e.clientY;
+            const currentTime = Date.now();
+
+            if (lastX !== null && lastY !== null) {
+                const dx = currentX - lastX;
+                const dy = currentY - lastY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const dt = Math.max(1, currentTime - lastTime);
+
+                if (dist > 6) {
+                    const speed = dist / dt;
+                    const halfLength = Math.min(65, Math.max(18, speed * 20));
+
+                    const moveAngle = Math.atan2(dy, dx);
+                    const count = 3 + Math.floor(Math.random() * 3);
+
+                    // Perpendicular unit vector for orthogonal spacing
+                    const perpX = -Math.sin(moveAngle);
+                    const perpY = Math.cos(moveAngle);
+
+                    for (let i = 0; i < count; i++) {
+                        // Strict alignment within +/- 15 degrees (~0.26 radians)
+                        const tightAngle = moveAngle + (Math.random() - 0.5) * Math.PI * 0.17;
+                        const len1 = halfLength * (0.8 + Math.random() * 0.4);
+                        const len2 = halfLength * (0.8 + Math.random() * 0.4);
+
+                        // Balanced orthogonal spacing (-22.5px to +22.5px offset)
+                        const lateralOffset = (Math.random() - 0.5) * 45;
+                        const originX = currentX + perpX * lateralOffset;
+                        const originY = currentY + perpY * lateralOffset;
+
+                        // Two ends pointing in opposite directions along the directional angle
+                        const startX = originX - Math.cos(tightAngle) * len1;
+                        const startY = originY - Math.sin(tightAngle) * len1;
+                        const endX = originX + Math.cos(tightAngle) * len2;
+                        const endY = originY + Math.sin(tightAngle) * len2;
+
+                        // Scaled curve control point offset
+                        const cpOffset = (Math.random() - 0.5) * 18;
+                        const cpX = originX + perpX * cpOffset;
+                        const cpY = originY + perpY * cpOffset;
+
+                        const chosenColor = nerveColors[Math.floor(Math.random() * nerveColors.length)];
+
+                        fibers.push({
+                            startX: startX,
+                            startY: startY,
+                            cpX: cpX,
+                            cpY: cpY,
+                            endX: endX,
+                            endY: endY,
+                            color: chosenColor,
+                            alpha: 0.8,
+                            life: 1.0,
+                            decay: 0.007 + Math.random() * 0.005 // Fades over ~1.5 to 2 seconds
+                        });
+                    }
+                    lastX = currentX;
+                    lastY = currentY;
+                    lastTime = currentTime;
+                }
+            } else {
+                lastX = currentX;
+                lastY = currentY;
+                lastTime = currentTime;
+            }
+        });
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = fibers.length - 1; i >= 0; i--) {
+                let f = fibers[i];
+                f.life -= f.decay;
+
+                if (f.life <= 0) {
+                    fibers.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = f.alpha * f.life;
+                ctx.lineWidth = 1.15; // Delicate thickness
+                ctx.strokeStyle = f.color;
+
+                ctx.beginPath();
+                ctx.moveTo(f.startX, f.startY);
+                ctx.quadraticCurveTo(f.cpX, f.cpY, f.endX, f.endY);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
